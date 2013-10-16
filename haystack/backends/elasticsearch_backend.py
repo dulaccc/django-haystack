@@ -172,8 +172,12 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     raise
                 self.log.error(inst)
 
-        # Wait for cluster to be ready before running any bulk indexing on it
-        self.conn.health(self.index_name, wait_for_status='yellow')
+        # Ensure the index is ready before running any bulk indexing on it
+        # self.conn.health(self.index_name, wait_for_status='yellow')
+        # TODO: temporary hack because '_cluster/health' is not available on Bonsai.io
+        #       and other service providers
+        import time
+        time.sleep(3)
 
         self.setup_complete = True
 
